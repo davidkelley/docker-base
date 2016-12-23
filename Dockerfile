@@ -11,5 +11,11 @@ RUN apk update && apk upgrade && apk add ${BUILD_PACKAGES} ${RUBY_PACKAGES} && r
 # Setup the working directory
 WORKDIR /app
 
+# Add current working directory in child builds
+ONBUILD ADD ./ /app
+
+# Bundle install child working directory
+ONBUILD RUN bundle install
+
 # Default the command to start the server
 CMD ["puma"]
