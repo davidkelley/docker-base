@@ -1,18 +1,24 @@
 FROM alpine:3.4
 
-ENV DEBIAN_FRONTEND noninteractive \
+ARG mount_path=/app
+
+ENV DEBIAN_FRONTEND=noninteractive MOUNT_PATH=$mount_path \
     BUILD_PACKAGES="build-base ca-certificates libxml2 libxslt openssl yaml git zlib glib" \
     RUBY_PACKAGES="ruby ruby-io-console ruby-dev ruby-bundler"
 
-# Configure deps.
+COPY harden.sh /usr/sbin/harden.sh
+
 RUN apk update && apk upgrade && apk add ${BUILD_PACKAGES} ${RUBY_PACKAGES} && rm -rf /var/cache/apk/* \
-    && echo 'gem: --no-document' >> ~/.gemrc && echo 'gem: --no-document' >> /etc/gemrc
+    && echo 'gem: --no-document' >> ~/.gemrc && echo 'gem: --no-document' >> /etc/gemrc \
+    && /usr/sbin/harden.sh
+
+USER user
 
 # Setup the working directory
-WORKDIR /app
+WORKDIR $MOUNT_PATH
 
 # Add current working directory in child builds
-ONBUILD ADD ./ /app
+ONBUILD ADD ./ $MOUNT_PATH
 
 # Bundle install child working directory
 ONBUILD RUN bundle install
