@@ -41,7 +41,6 @@ rm -fr /etc/periodic
 find /sbin /usr/sbin ! -type d \
   -a ! -name nologin \
   -a ! -name setup-proxy \
-  -a ! -name sshd \
   -a ! -name start.sh \
   -delete
 
@@ -78,6 +77,17 @@ find $sysdirs -xdev -type f -regex '.*-$' -exec rm -f {} +
 # Ensure system dirs are owned by root and not writable by anybody else.
 find $sysdirs -xdev -type d \
   -exec chown root:root {} \; \
+  -exec chmod 0755 {} \;
+
+userdirs="
+  /usr/lib/ruby
+  /usr/bin
+  $MOUNT_PATH
+"
+
+# Ensure nested dirs can be written by user
+find $userdirs -xdev -type d \
+  -exec chown user:user {} \; \
   -exec chmod 0755 {} \;
 
 # Remove all suid files.
