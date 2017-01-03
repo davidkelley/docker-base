@@ -3,8 +3,8 @@ FROM alpine:3.4
 ARG mount_path=/app
 
 ENV DEBIAN_FRONTEND=noninteractive MOUNT_PATH=$mount_path \
-    BUILD_PACKAGES="build-base linux-grsec ca-certificates libxml2 libxslt openssl yaml git zlib glib" \
-    RUBY_PACKAGES="ruby ruby-io-console ruby-dev ruby-bundler"
+    BUILD_PACKAGES="build-base linux-grsec ca-certificates libxml2 libxslt openssl yaml git zlib glib libffi libffi-dev" \
+    RUBY_PACKAGES="ruby ruby-io-console ruby-dev ruby-rake ruby-bundler"
 
 RUN apk update && apk upgrade && apk add ${BUILD_PACKAGES} ${RUBY_PACKAGES} && rm -rf /var/cache/apk/* \
     && echo 'gem: --no-document' >> ~/.gemrc && echo 'gem: --no-document' >> /etc/gemrc
